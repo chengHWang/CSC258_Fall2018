@@ -1,5 +1,5 @@
 vlib work
-vlog -timescale 1ns/1ns Alu0_6.v
+vlog -timescale 1ns/1ns complete_alu.v
 vsim alu
 log {/*}
 add wave {/*}
@@ -15,7 +15,7 @@ force {SW[5]} 0
 force {SW[6]} 0
 force {SW[7]} 0
 #KEY
-force {KEY[2]} 0
+force {KEY[2]} 1
 force {KEY[1]} 0
-force {KEY[0]} 0
+force {KEY[0]} 1
 run 20ns
