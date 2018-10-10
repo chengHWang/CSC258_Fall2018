@@ -44,7 +44,7 @@ module alu(SW,KEY0,HEX0,HEX1,HEX2,HEX3,HEX4,HEX5,LEDR);
 		tempHEX5 = ALUout[7:4];
 
 		//Set the new B
-		if(reset == 1'b0)
+		if(reset == 1'b1)
 			tempB <= ALUout[3:0];
 		else
 			tempB <= 4'b0000;
