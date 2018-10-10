@@ -1,5 +1,34 @@
-module shifter(SW,KEY,LEDR)
+module shifter(SW,KEY,LEDR);
+	input [9:0] SW;
+	input [3:0] KEY;
+	output [7:0] LEDR;
+	
+	wire [7:0] Q;
+	wire w0;
+	wire ASR = KEY[3];
+	wire [7:0] load_v = SW[7:0];
+	wire load_n = KEY[1];
+	wire clk = KEY[0];
+	wire shiftR = KEY[2];
+	wire reset_n = SW[9];
+	assign LEDR = Q; 
 
+	//The first mux2to1
+	mux2to1 m0(1'b0,Q[7],ASR,w0);
+	
+	//Here start 8 ShifterBits
+	shifterbit sb7(load_n,load_v[7],w0,shiftR,clk,reset_n,Q[7]);
+	shifterbit sb6(load_n,load_v[6],Q[7],shiftR,clk,reset_n,Q[6]);
+	shifterbit sb5(load_n,load_v[5],Q[6],shiftR,clk,reset_n,Q[5]);
+	shifterbit sb4(load_n,load_v[4],Q[5],shiftR,clk,reset_n,Q[4]);
+	shifterbit sb3(load_n,load_v[3],Q[4],shiftR,clk,reset_n,Q[3]);
+	shifterbit sb2(load_n,load_v[2],Q[3],shiftR,clk,reset_n,Q[2]);
+	shifterbit sb1(load_n,load_v[1],Q[2],shiftR,clk,reset_n,Q[1]);
+	shifterbit sb0(load_n,load_v[0],Q[1],shiftR,clk,reset_n,Q[0]);
+endmodule
+
+	
+	
 
 
 
