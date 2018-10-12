@@ -39,9 +39,9 @@ module alu(SW,KEY0,HEX0,HEX1,HEX2,HEX3,HEX4,HEX5,LEDR);
 	always@(posedge clock)
 	begin 
 		//Set the output
-		tempLEDR = ALUout;
-		tempHEX4 = ALUout[3:0];
-		tempHEX5 = ALUout[7:4];
+		tempLEDR <= ALUout;
+		tempHEX4 <= ALUout[3:0];
+		tempHEX5 <= ALUout[7:4];
 
 		//Set the new B
 		if(reset == 1'b1)
