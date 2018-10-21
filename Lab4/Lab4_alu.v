@@ -1,7 +1,7 @@
 module alu(SW,KEY0,HEX0,HEX1,HEX2,HEX3,HEX4,HEX5,LEDR);
-	//input & output
-	input [9:0] SW;
-	input KEY0;
+	//input & output  
+	input [9:0] SW;	// SW[3:0] = A; SW[9] = reset_n; SW[7:5] = function_input
+	input KEY0;	// KEY[0] = clk
 	output [6:0] HEX0;
 	output [6:0] HEX1;
 	output [6:0] HEX2;
@@ -13,8 +13,9 @@ module alu(SW,KEY0,HEX0,HEX1,HEX2,HEX3,HEX4,HEX5,LEDR);
 
 	//necessary wires
 	wire [7:0] ALUout;
+	reg [7:0] DffQ;
 	wire [3:0] A = SW[3:0]; 
-	wire [3:0] B;
+	wire [3:0] B = DffQ[3:0];
 	wire [2:0] mode = SW[7:5];
 	wire reset = SW[9];
 	wire clock = KEY0;
@@ -25,36 +26,31 @@ module alu(SW,KEY0,HEX0,HEX1,HEX2,HEX3,HEX4,HEX5,LEDR);
 	assign HEX1 = 7'b1111111;
 	assign HEX2 = 7'b1111111;
 	assign HEX3 = 7'b1111111;
+	HexLight hexl4(HEX4,B);
+	HexLight hexl5(HEX5,DffQ[7:4]);
+
+	
+	assign LEDR = DffQ;
 
 
 	//Get all the output ready
 	alu_cpu cpu(A,B,mode,ALUout);
 
 
-	reg [3:0] tempB;
-	reg [6:0] tempHEX4;
-	reg [6:0] tempHEX5;
-	reg [7:0] tempLEDR;
-	//The clock signal
-	always@(posedge clock)
-	begin 
-		//Set the output
-		tempLEDR <= ALUout;
-		tempHEX4 <= ALUout[3:0];
-		tempHEX5 <= ALUout[7:4];
-
-		//Set the new B
-		if(reset == 1'b1)
-			tempB <= ALUout[3:0];
+	//the register
+	always @(posedge clock)
+	begin
+		if (reset == 1'b0)
+			DffQ <=  8'b00000000;
 		else
-			tempB <= 4'b0000;
+			DffQ <= ALUout;
 	end
-	assign LEDR =  tempLEDR;
-	assign HEX4 = tempHEX4;
-	assign HEX5 = tempHEX5;
-	assign B = tempB;
-
 endmodule
+
+
+
+
+
 
 
 module alu_cpu(A,B,mode,ALUout);
@@ -130,22 +126,6 @@ endmodule
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //----------------------------help modules-----------------------------------
 module HexLight(Output,Input);
 	input [3:0] Input;
@@ -184,6 +164,8 @@ module HexLight(Output,Input);
 		  	((Input[3])&(Input[2])&(!Input[1])&(!Input[0]))|		//1100
 		  	((!Input[3])&(Input[2])&(Input[1])&(Input[0]));		//0111
 endmodule
+
+
 
 
 module fulladder4(InputA,InputB,Ci,Co,Output);

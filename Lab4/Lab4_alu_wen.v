@@ -1,6 +1,6 @@
-module L4P2(SW,KEY,HEX0,HEX1,HEX2,HEX3,HEX4,HEX5,LEDR);
+module L4P2(SW,KEY0,HEX0,HEX1,HEX2,HEX3,HEX4,HEX5,LEDR);
 	input [9:0] SW;  // SW[3:0] = A; SW[9] = reset_n; SW[7:5] = function_input
-	input [0:0] KEY; // KEY[0] = clk
+	input KEY0; // KEY0 = clk
 	output [6:0] HEX0; 
 	output [6:0] HEX1;
 	output [6:0] HEX2;
@@ -13,7 +13,7 @@ module L4P2(SW,KEY,HEX0,HEX1,HEX2,HEX3,HEX4,HEX5,LEDR);
 
 	wire [3:0] A = SW[3:0];
 	wire [3:0] B = q[3:0];
-	wire clk = KEY[0]; // clock input for the register
+	wire clk = KEY0; // clock input for the register
 	wire reset_n = SW[9];
 	
 	wire [2:0] mode = SW[7:5];  //Alu input    

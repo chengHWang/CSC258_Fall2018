@@ -1,8 +1,13 @@
-module L4P4(SW, KEY, LEDR);
+module L4P3(SW, KEY, LEDR);
 	input [9:0]SW; // SW9 = reset_n, SW7-0 = loadval7-0
 	input [3:0] KEY; // key1 = load_n, key2 = ShiftRight,key3 =  ASR, key 0 = clk
 	output [7:0] LEDR;
-	wire w;
+	wire reset = SW[9];
+	wire [7:0] LoadValue = SW[7:0];
+	wire Load_n = KEY[1];
+	wire clk = KEY[0];
+	wire ASR = KEY[3];
+	wire ShiftRight = KEY[2];
 
 	shift8bits s(
 		.LoadVal(SW[7:0]),

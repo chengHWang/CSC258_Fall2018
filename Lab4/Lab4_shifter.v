@@ -4,14 +4,28 @@ module shifter(SW,KEY,LEDR);
 	output [7:0] LEDR;
 	
 	wire [7:0] Q;
-	wire w0;
 	wire ASR = KEY[3];
-	wire [7:0] load_v = SW[7:0];
-	wire load_n = KEY[1];
+	wire [7:0] load_value = SW[7:0];
+	wire load_n = KEY[1]; //active low
 	wire clk = KEY[0];
 	wire shiftR = KEY[2];
 	wire reset_n = SW[9];
 	assign LEDR = Q; 
+
+	shifter8bits mainshifter(load_n,load_value,ASR,shiftR,clk,reset_n,Q);
+
+endmodule
+
+
+
+module shifter8bits(load_n,load_v,ASR,shiftR,clk,reset_n,Q);
+	input load_n;
+	input [7:0] load_v;
+	input ASR;
+	input shiftR;
+	input clk;
+	input reset_n;
+	output [7:0] Q;
 
 	//The first mux2to1
 	mux2to1 m0(1'b0,Q[7],ASR,w0);
@@ -26,9 +40,6 @@ module shifter(SW,KEY,LEDR);
 	shifterbit sb1(load_n,load_v[1],Q[2],shiftR,clk,reset_n,Q[1]);
 	shifterbit sb0(load_n,load_v[0],Q[1],shiftR,clk,reset_n,Q[0]);
 endmodule
-
-	
-	
 
 
 
@@ -62,7 +73,7 @@ module dff(d,clk,reset_n,q);
 	always @(posedge clk)
 	begin
 		if(reset_n == 1'b0)
-			tempq <= 0;
+			tempq <= 1'b0;
 		else
 			tempq <= d;
 	end
