@@ -1,34 +1,30 @@
 module morse(SW,KEY,LEDR,CLOCK_50);
-		input [2:0]SW;//chose S to Z
-		input [1:0]KEY;//key0 is reset,key1 start display
-		input CLOCK_50;
-		output [0:0]LEDR;
-		wire clock;
+	input [2:0]SW;//chose S to Z
+	input [1:0]KEY;//key0 is reset, key1 start display
+	input CLOCK_50;
+	output [0:0]LEDR;
 		
+	wire clock = CLOCK_50;
+	wire load_n = KEY[1];
+	wire reset = KEY[0];				
 		
+	wire e2;
+	wire s,t,u,v,w,x,y,z;
 		
-		wire reset,e2,load_n;
-		wire s,t,u,v,w,x,y,z;
+	rdivider d0({3'b000,25'd24999999},reset,clock,e2);
+	
+	assign cenable = e2;
 		
-		assign load_n = KEY[1];
-		assign reset = KEY[0];
-		assign clock = CLOCK_50;
-
+	shifter ss(cenable,13'b0000000010101,reset,clock,load_n,s);		
+	shifter st(cenable,13'b0000000000111,reset,clock,load_n,t);		
+	shifter su(cenable,13'b0000001110101,reset,clock,load_n,u);
+	shifter sv(cenable,13'b0000111010101,reset,clock,load_n,v);
+	shifter sw(cenable,13'b0000111011101,reset,clock,load_n,w);
+	shifter sx(cenable,13'b0011101010111,reset,clock,load_n,x);
+	shifter sy(cenable,13'b1110111010111,reset,clock,load_n,y);
+	shifter sz(cenable,13'b0010101110111,reset,clock,load_n,z);
 		
-		rdivider d0({3'b000,25'd24999999},reset,clock,e2);
-		
-		assign cenable = e2;
-		
-		shifter ss(cenable,13'b0000000010101,reset,clock,load_n,s);		
-		shifter st(cenable,13'b0000000000111,reset,clock,load_n,t);
-		shifter su(cenable,13'b0000001110101,reset,clock,load_n,u);
-		shifter sv(cenable,13'b0000111010101,reset,clock,load_n,v);
-		shifter sw(cenable,13'b0000111011101,reset,clock,load_n,w);
-		shifter sx(cenable,13'b0011101010111,reset,clock,load_n,x);
-		shifter sy(cenable,13'b1110111010111,reset,clock,load_n,y);
-		shifter sz(cenable,13'b0010101110111,reset,clock,load_n,z);
-		
-		reg out;
+	reg out;
 
 		always @(*)
 		begin 
@@ -54,9 +50,6 @@ module shifter(cenable,load,reset,clock,load_n,l);
 	output l;
 	wire [12:0]Loadval,outs;
 	wire reset_n,in,ShiftRight,clk;
-	
-	
-
 	
 	assign Loadval[12:0] = load;
 	assign reset_n = reset;
@@ -207,12 +200,13 @@ module shifter(cenable,load,reset,clock,load_n,l);
 
 endmodule
 	
+
 module shifterbit (load_val,in,shift,load_n,clock,reset_n,out);
-   input load_val,in,shift,load_n,clock,reset_n;
+   	input load_val, in, shift, load_n, clock, reset_n;
 	output out;
 	reg q;
-	assign w1 = q;
 	wire w1,w2,d;
+	assign w1 = q;
 	assign out = w1;
 	
 	always @(posedge clock) 
@@ -239,6 +233,7 @@ module shifterbit (load_val,in,shift,load_n,clock,reset_n,out);
 		
 endmodule
 	
+
 module mux2to1(x, y, s, m);
     input x; //selected when s is 0
     input y; //selected when s is 1
@@ -246,36 +241,27 @@ module mux2to1(x, y, s, m);
     output m; //output
   
     assign m = s & y | ~s & x;
-
-
 endmodule
 
 
-	
-	
-	
-
 module rdivider(load,reset,clock,rd);
-			input [27:0] load;
-			input clock;
-			input reset;
-			output rd;
-
-			reg [27:0] q;
-
-		always @(posedge clock) 
+	input [27:0] load;
+	input clock;
+	input reset;
+	output rd;
+	reg [27:0] q;
+	
+	always @(posedge clock) 
 		begin
 			if (reset == 1'b0) 
 				q <= 0; 
 			else begin
-					if(q == 0) 
-						q <= load;
-					else
-						q <= q - 1'b1; 
+				if(q == 0) 
+					q <= load;
+				else
+					q <= q - 1'b1; 
 				end
 		end
-
-		assign rd = (q == 0) ? 1 : 0;
-			
+	assign rd = (q == 0) ? 1 : 0;			
 endmodule 
 
