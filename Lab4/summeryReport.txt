@@ -1,7 +1,3 @@
 Part2 I forgot to use an register(dff), except this everything is correct.
 
-Part3 is quite strange. I can't tell any difference from the codes and simulations
-between my codes and Wen's codes. But my codes just don't work on chip! (Well, 
-maybe it's just because I didn't find out how to operate this circuits in on the chip. 
-Actually it's quite complicated.) But since the simulation is correct up to now, I can 
-only take my Part3 codes "correct", cause I don't have chip to check it out. :(
+With Evan's chip's help I finally made it! I found out what made my code wrong! It's the name of the module.  :(

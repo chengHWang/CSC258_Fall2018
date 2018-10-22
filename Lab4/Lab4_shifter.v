@@ -1,4 +1,4 @@
-module shifter(SW,KEY,LEDR);
+module Lab4P3(SW,KEY,LEDR);
 	input [9:0] SW;
 	input [3:0] KEY;
 	output [7:0] LEDR;
@@ -10,9 +10,9 @@ module shifter(SW,KEY,LEDR);
 	wire clk = KEY[0];
 	wire shiftR = KEY[2];
 	wire reset_n = SW[9];
-	assign LEDR = Q; 
 
 	shifter8bits mainshifter(load_n,load_value,ASR,shiftR,clk,reset_n,Q);
+	assign LEDR = Q;
 
 endmodule
 
@@ -26,6 +26,8 @@ module shifter8bits(load_n,load_v,ASR,shiftR,clk,reset_n,Q);
 	input clk;
 	input reset_n;
 	output [7:0] Q;
+
+	wire w0;
 
 	//The first mux2to1
 	mux2to1 m0(1'b0,Q[7],ASR,w0);
@@ -56,14 +58,14 @@ module shifterbit(load_n,load_v,in,shift,clk,reset_n,out);
 
 	mux2to1 m1(out,in,shift,w1);
 	mux2to1 m2(load_v,w1,load_n,w2);
-	dff d0(w2,clk,reset_n,out);
+	D_flipflop d0(w2,clk,reset_n,out);
 endmodule
 
 
 
 
 //------------------------help method-------------------------
-module dff(d,clk,reset_n,q);
+module D_flipflop(d,clk,reset_n,q);
 	input d;
 	input clk;
 	input reset_n;

@@ -128,41 +128,32 @@ endmodule
 
 //----------------------------help modules-----------------------------------
 module HexLight(Output,Input);
-	input [3:0] Input;
-	output [6:0] Output;
-
-	assign Output[0] = ((!Input[3])&(!Input[2])&(!Input[1])&(Input[0]))|	//0001
-		            ((!Input[3])&(Input[2])&(!Input[1])&(!Input[0]))|	//0100
-		            ((Input[3])&(Input[2])&(!Input[1])&(Input[0]))|	//1101
-		            ((Input[3])&(!Input[2])&(Input[1])&(Input[0]));	//1011
-
-	assign Output[1] = ((Input[3])&(Input[1])&(Input[0]))|	                //1x11
-		            ((Input[2])&(Input[1])&(!Input[0]))|		//x110
-		            ((Input[3])&(Input[2])&(!Input[1])&(!Input[0]))|	//1100
-		            ((!Input[3])&(Input[2])&(!Input[1])&(Input[0]));	//0101
-		 
-	assign Output[2] = ((Input[3])&(Input[2])&(!Input[1])&(!Input[0]))|	//1100
-		  	((Input[3])&(Input[2])&(Input[1]))|			//111x
-		 	 ((!Input[3])&(!Input[2])&(Input[1])&(!Input[0]));		//0010
-
-	assign Output[3] = ((!Input[3])&(Input[2])&(!Input[1])&(!Input[0]))|	//0100
-		  	((!Input[3])&(!Input[2])&(!Input[1])&(Input[0]))|		//0001
-		  	((!Input[3])&(Input[2])&(Input[1])&(Input[0]))|		//0111
-		  	 ((Input[3])&(!Input[2])&(Input[1])&(!Input[0]))|		//1010
-		 	((Input[3])&(Input[2])&(Input[1])&(Input[0]));		//1111
-		
-	assign Output[4] = ((!Input[3])&(Input[0]))|			//0xx1
-		  	((!Input[3])&(Input[2])&(!Input[1]))|			//010x
-		  	((!Input[2])&(!Input[1])&(Input[0]));			//x001
-
-	assign Output[5] = ((!Input[3])&(!Input[2])&(Input[0]))|		//00x1
-		  	((!Input[3])&(!Input[2])&(Input[1]))|			//001x
-		  	((!Input[3])&(Input[1])&(Input[0]))|			//0x11
-		  	((Input[3])&(Input[2])&(!Input[1])&(Input[0]));		//1101
-
-	assign Output[6] = ((!Input[3])&(!Input[2])&(!Input[1]))|		//000x
-		  	((Input[3])&(Input[2])&(!Input[1])&(!Input[0]))|		//1100
-		  	((!Input[3])&(Input[2])&(Input[1])&(Input[0]));		//0111
+module HexLight(out,in);
+	input [3:0]in;
+	output reg [6:0]out;
+	
+	always @(in)
+	begin
+		case (in[3:0])
+			4'h0:out = 7'b100_0000;
+			4'h1:out = 7'b111_1001;
+			4'h2:out = 7'b010_0100;
+			4'h3:out = 7'b011_0000;
+			4'h4:out = 7'b001_1001;
+			4'h5:out = 7'b001_0010;
+			4'h6:out = 7'b000_0010;
+			4'h7:out = 7'b111_1000;
+			4'h8:out = 7'b000_0000;
+			4'h9:out = 7'b001_0000;
+			4'hA:out = 7'b000_1000;
+			4'hB:out = 7'b000_0011;
+			4'hC:out = 7'b100_0110;
+			4'hD:out = 7'b010_0001;
+			4'hE:out = 7'b000_0110;
+			4'hF:out = 7'b000_1110;
+			default:out = 7'b111_1111;
+		endcase
+	end
 endmodule
 
 
