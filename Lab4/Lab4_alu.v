@@ -1,134 +1,149 @@
-module alu(SW,KEY0,HEX0,HEX1,HEX2,HEX3,HEX4,HEX5,LEDR);
-	//input & output  
-	input [9:0] SW;	// SW[3:0] = A; SW[9] = reset_n; SW[7:5] = function_input
-	input KEY0;	// KEY[0] = clk
-	output [6:0] HEX0;
-	output [6:0] HEX1;
-	output [6:0] HEX2;
-	output [6:0] HEX3;
-	output [6:0] HEX4;
-	output [6:0] HEX5;
+module Lab4P2 (SW, KEY, LEDR, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5);
+	//------Input and Output------
+	input [9:0] SW;
+	input [2:0] KEY;
 	output [7:0] LEDR;
-
-
-	//necessary wires
-	wire [7:0] ALUout;
-	reg [7:0] DffQ;
-	wire [3:0] A = SW[3:0]; 
-	wire [3:0] B = DffQ[3:0];
-	wire [2:0] mode = SW[7:5];
-	wire reset = SW[9];
-	wire clock = KEY0;
-
+	output [6:0] HEX0,HEX1,HEX2,HEX3,HEX4,HEX5;
 	
-	//Using help module Hexlight 
-	HexLight hexl0(HEX0,A);
+	
+	//------wires needed------
+	wire [3:0] A = SW[3:0];
+	wire [2:0] mode = SW[7:5];
+	wire [7:0] DffQ;
+	wire [3:0] B = DffQ[3:0];
+	
+	reg [7:0] ALUout;
+	
+	assign LEDR = DffQ;
+	
+	
+	//------Get the ALUout------ 
+	wire [7:0] adder_output0,adder_output1;
+	
+	full_adder4 fa0(
+		.A(SW[3:0]), 
+		.B(4'b0001), 
+		.S(adder_output0[3:0]), 
+		.cout(adder_output0[4])
+	);
+	
+	full_adder4 fa1(
+	
+		.A(SW[3:0]), 
+		.B(B), 
+		.S(adder_output1[3:0]),
+		.cout(adder_output1[4])
+   	);
+	
+	always @(*)
+		begin
+			case (mode)
+				3'b000: ALUout = {3'b000, adder_output0[4:0]};
+				3'b001: ALUout = {3'b000, adder_output1[4:0]};
+				3'b010: ALUout = A + B;
+				3'b011: ALUout = {A|B, A^B};
+				3'b100: ALUout = | A ? 8'b00000001:8'b00000000;
+				3'b101: ALUout = B << A ;
+				3'b110: ALUout = B >> A ;
+				3'b111: ALUout = A * B;
+				default: ALUout = 8'b00000000;	
+			endcase
+		end 
+		
+		
+	//------The register------
+	Register regi(
+		.reset_n(SW[9]),
+		.Clk(KEY[0]),
+		.D(ALUout),
+		.out(DffQ)
+	);		
+	
+	
+	//------All the Hexlight------
+	HEX hex0(
+		.out(HEX0[6:0]),
+		.in(SW[3:0]));
 	assign HEX1 = 7'b1111111;
 	assign HEX2 = 7'b1111111;
 	assign HEX3 = 7'b1111111;
-	HexLight hexl4(HEX4,B);
-	HexLight hexl5(HEX5,DffQ[7:4]);
-
+	HEX hex4(
+		.out(HEX4[6:0]),
+		.in(DffQ[3:0]));
+	HEX hex5(
+		.out(HEX5[6:0]),
+		.in(DffQ[7:4]));
 	
-	assign LEDR = DffQ;
-
-
-	//Get all the output ready
-	alu_cpu cpu(A,B,mode,ALUout);
-
-
-	//the register
-	always @(posedge clock)
-	begin
-		if (reset == 1'b0)
-			DffQ <=  8'b00000000;
-		else
-			DffQ <= ALUout;
-	end
 endmodule
 
 
+module Register (reset_n,Clk,D,out);
+	input reset_n;
+	input Clk;
+	input [7:0]D;
+	output [7:0]out;
+	reg [7:0]q;
+	
+	always @(posedge Clk)
+	begin 
+		if(reset_n == 1'b0)
+			q <= 8'b00000000;
+		else
+			q <= D;
+	end
+	assign out = q;
+endmodule	
 
-
-
-
-
-module alu_cpu(A,B,mode,ALUout);
+module full_adder4(S,cout,A,B);
 	input [3:0] A;
 	input [3:0] B;
-	input [2:0] mode;
-	output [7:0] ALUout;
+	output [3:0] S;
+	output cout;
+	wire w1,w2,w3;
+	
+	full_adder_single fa1(
+		.A(A[0]),
+		.B(B[0]),
+		.cin(0),
+		.S(S[0]),
+		.cout(w1)
+	);
+	
+	full_adder_single fa2(
+		.A(A[1]),
+		.B(B[1]),
+		.cin(w1),
+		.S(S[1]),
+		.cout(w2)
+	);
+	
+	full_adder_single fa3(
+		.A(A[2]),
+		.B(B[2]),
+		.cin(w2),
+		.S(S[2]),
+		.cout(w3)
+	);
+	
+	full_adder_single fa4(
+		.A(A[3]),
+		.B(B[3]),
+		.cin(w3),
+		.S(S[3]),
+		.cout(cout)
+	);
+endmodule
 
-	//all the outputs for each mode
-	wire [7:0] wire0;
-	wire [7:0] wire1;
-	wire [7:0] wire2;
-	wire [7:0] wire3;
-	wire [7:0] wire4;
-	wire [7:0] wire5;
-	wire [7:0] wire6;
-	wire [7:0] wire7;
-	wire [7:0] wire8;
-
-	//Case0
-	//we will use help module fullAdder4 here
-	wire [4:0] temp0;
-	fulladder4 fa0(A,4'b0001,1'b0,temp0[4],temp0[3:0]);
-	assign wire0 = {3'b000,temp0};
-
-	//Case1
-	//we will use help module fullAdder4 here
-	wire [4:0] temp1;
-	fulladder4 fa1(A,B,1'b0, temp1[4],temp1[3:0]);
-	assign wire1 = {3'b000,temp1};
-
-	//Case2
-	assign wire2 = A+B;
-
-	//Case3
-	assign wire3[3:0] = A^B;
-	assign wire3[7:4] = A|B;
-
-	//Case4
-	assign wire4 = {7'b0000000, | {A,B}};
-
-	//Case5
-	assign wire5 = B<<A;
-
-	//Case6
-	assign wire6 = B>>A;
-
-	//Case7
-	assign wire7 = A*B;
-
-	//Case8
-	assign wire8 = 8'b00000000;
-
-	reg [7:0]out;
-	always @(*)
-	begin
-		case(mode)
-			3'b000: out = wire0;
-			3'b001: out = wire1;
-			3'b010: out = wire2;
-			3'b011: out = wire3;
-			3'b100: out = wire4;
-			3'b101: out = wire5;
-			3'b110: out = wire6;
-			3'b111: out = wire7;
-			default: out = wire8; 
-		endcase
-	end
-	assign ALUout = out;
+module full_adder_single(S,cout,A,B,cin);
+	input A, B, cin;
+	output S, cout;
+	
+	assign S = A^B^cin;
+	assign cout = (A&B)|(cin&(A^B));
 endmodule
 
 
-
-
-
-//----------------------------help modules-----------------------------------
-module HexLight(Output,Input);
-module HexLight(out,in);
+module HEX(in,out);
 	input [3:0]in;
 	output reg [6:0]out;
 	
@@ -154,90 +169,4 @@ module HexLight(out,in);
 			default:out = 7'b111_1111;
 		endcase
 	end
-endmodule
-
-
-
-
-module fulladder4(InputA,InputB,Ci,Co,Output);
-    input [3:0] InputA;
-    input [3:0] InputB;   
-    input Ci;
-    input Co;
-    output [3:0] Output;
-    wire w1,w2,w3;
-
-    fulladder1 a1(
-        .Ci(Ci),
-        .a(InputA[0]),
-        .b(InputB[0]),
-        .s(Output[0]),
-        .Co(w1)
-        );
-
-    fulladder1 a2(
-        .Ci(w1),
-        .a(InputA[1]),
-        .b(InputB[1]),
-        .s(Output[1]),
-        .Co(w2)
-        );
-    
-    fulladder1 a3(
-        .Ci(w2),
-        .a(InputA[2]),
-        .b(InputB[2]),
-        .s(Output[2]),
-        .Co(w3)
-        );
-
-    fulladder1 a4(
-        .Ci(w3),
-        .a(InputA[3]),
-        .b(InputB[3]),
-        .s(Output[3]),
-        .Co(Co)
-        );
-endmodule
-
-
-module fulladder1(Ci,a,b,s,Co);
-    input Ci,a,b;
-    output s,Co;
-    wire w1;
-    
-    xor_gate x1(
-        .y(w1),
-        .a(a),
-        .b(b)
-        );
-
-    xor_gate x2(
-        .y(s),
-        .a(Ci),
-        .b(w1)
-        );
-
-    mux2to1 u1(
-        .x(b),
-        .y(Ci),
-        .s(w1),
-        .m(Co)
-        );
-endmodule
-
-
-module mux2to1(x, y, s, m);
-    input x; //selected when s is 0
-    input y; //selected when s is 1
-    input s; //select signal
-    output m; //output
-    assign m = s & y | ~s & x;
-endmodule
-
-
-module xor_gate(y,a,b);
-    input a,b;
-    output y;
-    assign y = (!a & b) | (a & !b);
 endmodule
