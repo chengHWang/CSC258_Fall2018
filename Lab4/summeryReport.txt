@@ -1,3 +1,3 @@
-Part2 I forgot to use an register(dff), except this everything is correct.
+Finally I finish the lab4. I'm so tiring and don't want to write anything more.
 
 With Evan's chip's help I finally made it! I found out what made my code wrong! It's the name of the module.  :(

@@ -1,12 +1,14 @@
-module Lab5Part2(SW,HEX0,CLOCK_50);
+module Lab5P2(SW,HEX0,HEX5,CLOCK_50);
 	input [9:0] SW;
 	input CLOCK_50;
 	output [6:0] HEX0;
+	output [6:0] HEX5;
+
 	
 	wire [1:0] speedControl = SW[1:0];
 	wire enable = SW[8];
 	wire reset = SW[9];
-	wire setValue = SW[5:2];
+	wire [3:0] setValue = SW[5:2];
 	wire set = SW[6];
 		
 	wire [27:0]w1;
@@ -42,6 +44,13 @@ module Lab5Part2(SW,HEX0,CLOCK_50);
 	HEX hex0(
 		.out(HEX0[6:0]),
 		.in(w3)
+	);
+	
+	
+	//Show the setNumber
+	HEX hex5(
+		.out(HEX5[6:0]),
+		.in(setValue)
 	);
 endmodule
 

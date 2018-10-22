@@ -152,7 +152,7 @@ module shifter(cenable,load,reset,clock,load_n,l);
 	);	
 	
 	
-		shifterbit s9(
+	shifterbit s9(
 	.load_val(Loadval[9]),
 	.in(outs[10]),
 	.shift(ShiftRight),
@@ -163,7 +163,7 @@ module shifter(cenable,load,reset,clock,load_n,l);
 	);	
 	
 	
-		shifterbit s10(
+	shifterbit s10(
 	.load_val(Loadval[10]),
 	.in(outs[11]),
 	.shift(ShiftRight),
@@ -174,7 +174,7 @@ module shifter(cenable,load,reset,clock,load_n,l);
 	);	
 	
 	
-		shifterbit s11(
+	shifterbit s11(
 	.load_val(Loadval[11]),
 	.in(outs[12]),
 	.shift(ShiftRight),
@@ -184,9 +184,9 @@ module shifter(cenable,load,reset,clock,load_n,l);
 	.out(outs[11])
 	);	
 	
+
 	
-	
-		shifterbit s12(
+	shifterbit s12(
 	.load_val(Loadval[12]),
 	.in(1'b0),
 	.shift(ShiftRight),
