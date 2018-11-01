@@ -5,25 +5,8 @@ module mux4to1(u,v,w,x,s1,s0,m);
 
     wire w1,w2;
     
-    mux2to1 u1(
-        .x(u),
-        .y(v),
-        .s(s0),
-        .m(w1)
-        );
-    
-    mux2to1 u2(
-        .x(w),
-        .y(x),
-        .s(s0),
-        .m(w2)
-        );
-
-    mux2to1 u0(
-        .x(w1),
-        .y(w2),
-        .s(s1),
-        .m(m)
-        );
-
+    mux2to1 u1(u,v,s0,w1);
+    mux2to1 u2(w,x,s0,w2);
+    mux2to1 u0(w1,w2,s1,m);
+        
 endmodule
