@@ -1,6 +1,6 @@
 10_5
 This dir contains all the codes for labs and project of CSC258. 
-And this read me is used to check if this git repo. is working or not. 
+And this read me is used to check if this git repo. works or not. 
 
 11_17 
 All the labs are over, project is coming in the next 3 weeks.
@@ -9,4 +9,4 @@ All the labs are over, project is coming in the next 3 weeks.
 Project is over. This repository closed.
 
 12_12
-Äã±ØĞëÌøÏÂĞüÑÂ£¬ÔÚ¶éÂä¿ÕÖĞÉú³ö³á°ò¡£
+ä½ å¿…é¡»è·³ä¸‹æ‚¬å´–ï¼Œåœ¨å •è½ç©ºä¸­ç”Ÿå‡ºç¿…è†€ã€‚
