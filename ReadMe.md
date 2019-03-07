@@ -9,4 +9,4 @@ All the labs are over, project is coming in the next 3 weeks.
 Project is over. This repository closed.
 
 12_12
-你必须跳下悬崖，在堕落空中生出翅膀。
+You've got to jump off cliffs all time and build your wings on the way down. --R.Bardbury
